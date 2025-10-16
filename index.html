@@ -2672,83 +2672,91 @@ const numMatchesWithShotData = matchesWithShotData.length;
         </div>
     `;
 
-    const playerStats = {};
-    const playerMatchAppearances = {};
-    
-    allMatches.forEach((match, matchIndex) => {
+  const playerStats = {};
+const playerMatchAppearances = {};
+
+allMatches.forEach((match, matchIndex) => {
     match.jugadors.forEach(j => {
+        // ✅ USAR EL NÚMERO COM A CLAU en lloc del nom
+        const playerId = j.numero.toString();
         const playerName = j.nom.trim();
         
-        if (!playerStats[playerName]) {
-            playerStats[playerName] = { 
+        if (!playerStats[playerId]) {
+            playerStats[playerId] = { 
                 num: j.numero,
-                name: playerName, 
+                name: playerName,  // Agafem el nom de la primera aparició
                 gols: 0, 
                 exclusions: 0,
                 penaltyMissed: 0,
                 partidos: 0,
                 goalTypes: { 'h+': 0, penalty: 0, contra: 0, boya: 0, normal: 0 },
-                // ✅ NUEVO:
                 parades: 0,
                 paradeTypes: { corner: 0, rebuig: 0, atrapa: 0, penal: 0 },
                 assistencies: 0,
                 robatoris: 0,
                 perdues: 0,
                 xutsFallats: 0,
-				blocks: 0,
+                blocks: 0,
                 faltesRebudes: 0,
                 goalTypes: { 'h+': 0, penalty: 0, contra: 0, boya: 0, normal: 0 },
-                paradeTypes: { corner: 0, rebuig: 0, atrapa: 0 }
+                paradeTypes: { corner: 0, rebuig: 0, atrapa: 0, penal: 0 }
             };
-            playerMatchAppearances[playerName] = new Set();
+            playerMatchAppearances[playerId] = new Set();
         }
         
-        playerStats[playerName].num = j.numero;
-        playerMatchAppearances[playerName].add(matchIndex);
+        // ✅ Actualitzar el nom si és més llarg (més complet)
+        if (playerName.length > playerStats[playerId].name.length) {
+            playerStats[playerId].name = playerName;
+        }
         
-        playerStats[playerName].gols += j.estadistiques.gols;
-        playerStats[playerName].exclusions += j.estadistiques.exclusions;
-        playerStats[playerName].penaltyMissed += (j.estadistiques.penaltyMissed || 0);
-        playerStats[playerName].parades += (j.estadistiques.parades || 0);
-        playerStats[playerName].assistencies += (j.estadistiques.assistencies || 0);
-        playerStats[playerName].robatoris += (j.estadistiques.robatoris || 0);
-        playerStats[playerName].perdues += (j.estadistiques.perdues || 0);
-        playerStats[playerName].xutsFallats += (j.estadistiques.xutsFallats || 0);
-        playerStats[playerName].blocks += (j.estadistiques.blocks || 0);
-        playerStats[playerName].faltesRebudes += (j.estadistiques.faltesRebudes || 0);
-        playerStats[playerName].blocatges += (j.estadistiques.blocatges || 0);
-playerStats[playerName].faltesRebudes += (j.estadistiques.faltesRebudes || 0);
+        playerStats[playerId].num = j.numero;
+        playerMatchAppearances[playerId].add(matchIndex);
+        
+        playerStats[playerId].gols += j.estadistiques.gols;
+        playerStats[playerId].exclusions += j.estadistiques.exclusions;
+        playerStats[playerId].penaltyMissed += (j.estadistiques.penaltyMissed || 0);
+        playerStats[playerId].parades += (j.estadistiques.parades || 0);
+        playerStats[playerId].assistencies += (j.estadistiques.assistencies || 0);
+        playerStats[playerId].robatoris += (j.estadistiques.robatoris || 0);
+        playerStats[playerId].perdues += (j.estadistiques.perdues || 0);
+        playerStats[playerId].xutsFallats += (j.estadistiques.xutsFallats || 0);
+        playerStats[playerId].blocks += (j.estadistiques.blocks || 0);
+        playerStats[playerId].faltesRebudes += (j.estadistiques.faltesRebudes || 0);
+        playerStats[playerId].blocatges += (j.estadistiques.blocatges || 0);
+        
         if (j.estadistiques.goalTypes) {
-            Object.keys(playerStats[playerName].goalTypes).forEach(type => {
-                playerStats[playerName].goalTypes[type] += j.estadistiques.goalTypes[type] || 0;
+            Object.keys(playerStats[playerId].goalTypes).forEach(type => {
+                playerStats[playerId].goalTypes[type] += j.estadistiques.goalTypes[type] || 0;
             });
         }
-		
-     if (j.estadistiques.exclusionTypes) {
-    if (playerStats[playerName].exclusionTypes) {
-        Object.keys(playerStats[playerName].exclusionTypes).forEach(type => {
-            playerStats[playerName].exclusionTypes[type] += (j.estadistiques.exclusionTypes[type] || 0);
-        });
-    }
-} else {
-    // Si no té exclusionTypes, assegurem que sigui un objecte buit
-    if (!playerStats[playerName].exclusionTypes) {
-        playerStats[playerName].exclusionTypes = { normal: 0, penalty: 0 };
-    }
-}
+        
+        if (j.estadistiques.exclusionTypes) {
+            if (playerStats[playerId].exclusionTypes) {
+                Object.keys(playerStats[playerId].exclusionTypes).forEach(type => {
+                    playerStats[playerId].exclusionTypes[type] += (j.estadistiques.exclusionTypes[type] || 0);
+                });
+            }
+        } else {
+            if (!playerStats[playerId].exclusionTypes) {
+                playerStats[playerId].exclusionTypes = { normal: 0, penalty: 0 };
+            }
+        }
+        
         if (j.estadistiques.paradeTypes) {
-            Object.keys(playerStats[playerName].paradeTypes).forEach(type => {
-                playerStats[playerName].paradeTypes[type] += j.estadistiques.paradeTypes[type] || 0;
+            Object.keys(playerStats[playerId].paradeTypes).forEach(type => {
+                playerStats[playerId].paradeTypes[type] += j.estadistiques.paradeTypes[type] || 0;
             });
         }
     });
 });
-    
-    Object.keys(playerStats).forEach(name => {
-        playerStats[name].partidos = playerMatchAppearances[name].size;
-    });
 
-    const players = Object.values(playerStats).map(p => {
+// ✅ Calcular número de partits
+Object.keys(playerStats).forEach(playerId => {
+    playerStats[playerId].partidos = playerMatchAppearances[playerId].size;
+});
+
+// ✅ Calcular valor i ordenar
+const players = Object.values(playerStats).map(p => {
     const valor = calculatePlayerValue({
         gols: p.gols,
         goalTypes: p.goalTypes,
@@ -2766,12 +2774,11 @@ playerStats[playerName].faltesRebudes += (j.estadistiques.faltesRebudes || 0);
     return { ...p, valor };
 }).sort((a, b) => b.valor - a.valor);
 
-// ✅ Guardar dades per ordenació
+// Continuar amb la resta del codi...
 cachedPlayersData = players;
 currentSortColumn = 'valor';
 currentSortOrder = 'desc';
 
-// ✅ Usar la nova funció de renderització
 renderComparisonTable(players);
 
     const topScorers = Object.values(playerStats)
