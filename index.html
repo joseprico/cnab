@@ -5466,7 +5466,7 @@ function calculatePlayerValue(stats) {
     valor += penaltyMissed * (-2); // Penalty fallat: -2
     valor += turnovers * (-0.5);   // Pèrdues: -0.5
     valor += shotsMissed * (-0.5); // Xuts fallats: -0.5
-    valor += golsRebuts * (-0.5);    // ⚠️ NOU: Gols rebuts: -1
+    valor += golsRebuts * (-0.5);    // ⚠️ NOU: Gols rebuts: -0.5
     
     return valor;
 }
