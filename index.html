@@ -851,7 +851,7 @@
         • Gol normal/contraatac/H+/boya: +2 | Gol penalty: +1<br>
         • Assistència: +1 | Robatori: +1 | Blocatge: +1 | Parada: +1 | Parada penal: +2 | Falta rebuda: +1<br><br>
         <strong style="color: #ef4444;">Accions Negatives:</strong><br>
-        • Exclusió (normal o penalty): -1 | Penalty fallat: -2 | Pèrdua: -0.5 | Tir fallat: -0.5 | Gol rebut (porters): -1
+        • Exclusió (normal o penalty): -1 | Penalty fallat: -2 | Pèrdua: -0.5 | Tir fallat: -0.5 | Gol rebut (porters): -0.5
     </div>
 </div>
 </div>
@@ -1036,7 +1036,7 @@
         • Gol normal/contraatac/H+/boya: +2 | Gol penalty: +1<br>
         • Assistència: +1 | Robatori: +1 | Blocatge: +1 | Parada: +1 | Parada penal: +2 | Falta rebuda: +1<br><br>
         <strong style="color: #ef4444;">Accions Negatives:</strong><br>
-        • Exclusió (normal o penalty): -1 | Penalty fallat: -2 | Pèrdua: -0.5 | Tir fallat: -0.5 | Gol rebut (porters): -1
+        • Exclusió (normal o penalty): -1 | Penalty fallat: -2 | Pèrdua: -0.5 | Tir fallat: -0.5 | Gol rebut (porters): -0.5
     </div>
 </div>
 </div>
@@ -5466,7 +5466,7 @@ function calculatePlayerValue(stats) {
     valor += penaltyMissed * (-2); // Penalty fallat: -2
     valor += turnovers * (-0.5);   // Pèrdues: -0.5
     valor += shotsMissed * (-0.5); // Xuts fallats: -0.5
-    valor += golsRebuts * (-1);    // ⚠️ NOU: Gols rebuts: -1
+    valor += golsRebuts * (-0.5);    // ⚠️ NOU: Gols rebuts: -1
     
     return valor;
 }
