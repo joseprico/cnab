@@ -845,15 +845,15 @@
         <table class="comparison-table" id="singleMatchStatsTable"></table>
     </div>
     <div style="margin-top: 20px; padding: 15px; background: rgba(34, 211, 238, 0.1); border-radius: 8px; border-left: 4px solid #22d3ee;">
-        <h3 style="color: #22d3ee; margin-bottom: 10px; font-size: 14px;">⭐ Criteris de Valoració MVP</h3>
-        <div style="font-size: 12px; color: #bae6fd; line-height: 1.8;">
-            <strong style="color: #22c55e;">Accions Positives:</strong><br>
-            • Gol normal/contraatac/H+/boya: +2 | Gol penalty: +1<br>
-            • Assistència: +1 | Robatori: +1 | Blocatge: +1 | Parada: +2 | Parada penal:  +3| Falta rebuda: +1<br><br>
-            <strong style="color: #ef4444;">Accions Negatives:</strong><br>
-            • Exclusió (normal o penalty): -1 | Penalty fallat: -2 | Pèrdua: -0.5 | Tir fallat: -0.5
-        </div>
+    <h3 style="color: #22d3ee; margin-bottom: 10px; font-size: 14px;">⭐ Criteris de Valoració MVP</h3>
+    <div style="font-size: 12px; color: #bae6fd; line-height: 1.8;">
+        <strong style="color: #22c55e;">Accions Positives:</strong><br>
+        • Gol normal/contraatac/H+/boya: +2 | Gol penalty: +1<br>
+        • Assistència: +1 | Robatori: +1 | Blocatge: +1 | Parada: +1 | Parada penal: +2 | Falta rebuda: +1<br><br>
+        <strong style="color: #ef4444;">Accions Negatives:</strong><br>
+        • Exclusió (normal o penalty): -1 | Penalty fallat: -2 | Pèrdua: -0.5 | Tir fallat: -0.5 | Gol rebut (porters): -1
     </div>
+</div>
 </div>
 
                 
@@ -1030,15 +1030,15 @@
         <table class="comparison-table" id="comparisonTable"></table>
     </div>
     <div style="margin-top: 20px; padding: 15px; background: rgba(34, 211, 238, 0.1); border-radius: 8px; border-left: 4px solid #22d3ee;">
-        <h3 style="color: #22d3ee; margin-bottom: 10px; font-size: 14px;">⭐ Criteris de Valoració MVP</h3>
-        <div style="font-size: 12px; color: #bae6fd; line-height: 1.8;">
-            <strong style="color: #22c55e;">Accions Positives:</strong><br>
-            • Gol normal/contraatac/H+/boya: +2 | Gol penalty: +1<br>
-            • Assistència: +1 | Robatori: +1 | Blocatge: +1 | Parada: +2 | Falta rebuda: +1<br><br>
-            <strong style="color: #ef4444;">Accions Negatives:</strong><br>
-            • Exclusió (normal o penalty): -1 | Penalty fallat: -2 | Pèrdua: -0.5 | Tir fallat: -0.5
-        </div>
+    <h3 style="color: #22d3ee; margin-bottom: 10px; font-size: 14px;">⭐ Criteris de Valoració MVP</h3>
+    <div style="font-size: 12px; color: #bae6fd; line-height: 1.8;">
+        <strong style="color: #22c55e;">Accions Positives:</strong><br>
+        • Gol normal/contraatac/H+/boya: +2 | Gol penalty: +1<br>
+        • Assistència: +1 | Robatori: +1 | Blocatge: +1 | Parada: +1 | Parada penal: +2 | Falta rebuda: +1<br><br>
+        <strong style="color: #ef4444;">Accions Negatives:</strong><br>
+        • Exclusió (normal o penalty): -1 | Penalty fallat: -2 | Pèrdua: -0.5 | Tir fallat: -0.5 | Gol rebut (porters): -1
     </div>
+</div>
 </div>
 
         <div class="card">
@@ -5434,7 +5434,7 @@ function calculatePlayerValue(stats) {
     const blocks = stats.blocks || stats.blocatges || 0;
     const foulsReceived = stats.faltesRebudes || stats.foulReceived || 0;
     
-    // Parades
+    // ⚠️ CANVI: Parades ara sumen +1 (abans +2)
     const saves = (paradeTypes.corner || 0) + (paradeTypes.rebuig || 0) + 
                  (paradeTypes.atrapa || 0);
     const penaltySaves = paradeTypes.penal || 0;
@@ -5445,6 +5445,9 @@ function calculatePlayerValue(stats) {
     const turnovers = stats.perdues || stats.turnovers || 0;
     const shotsMissed = stats.xutsFallats || stats.shotsMissed || 0;
     
+    // ⚠️ NOU: Gols rebuts pel porter
+    const golsRebuts = stats.golsRebuts || 0;
+    
     // CÀLCUL DEL VALOR
     let valor = 0;
     
@@ -5454,8 +5457,8 @@ function calculatePlayerValue(stats) {
     valor += assists * 1;          // Assistències: +1
     valor += steals * 1;           // Robatoris: +1
     valor += blocks * 1;           // Blocks: +1
-    valor += saves * 2;            // Parades: +2
-    valor += penaltySaves * 3;     // Parades penalty: +3
+    valor += saves * 1;            // ⚠️ CANVI: Parades: +1 (abans +2)
+    valor += penaltySaves * 2;     // ⚠️ CANVI: Parades penalty: +2 (abans +3)
     valor += foulsReceived * 1;    // Faltes rebudes: +1
     
     // Negatives
@@ -5463,6 +5466,7 @@ function calculatePlayerValue(stats) {
     valor += penaltyMissed * (-2); // Penalty fallat: -2
     valor += turnovers * (-0.5);   // Pèrdues: -0.5
     valor += shotsMissed * (-0.5); // Xuts fallats: -0.5
+    valor += golsRebuts * (-1);    // ⚠️ NOU: Gols rebuts: -1
     
     return valor;
 }
@@ -6872,7 +6876,7 @@ function generateGeneralPDF() {
     yPos += 3;
     doc.text('Rob=Robatoris, Pèr=Pèrdues, FR=Faltes Rebudes, Xuts=Xuts Fallats, PenF=Penalties Fallats, Efic%=Eficiència Tir, G/P=Gols/Partit, Valor=Valoració Global', leftMargin, yPos);
     yPos += 3;
-    doc.text('Valoració = Gols×3 + Assist×2 + Rob×1 + Parades×2 - Pèrdues×1 - Exclusions×2', leftMargin, yPos);
+   doc.text('Valoració = Gols×3 + Assist×2 + Rob×1 + Parades×1 - Pèrdues×1 - Exclusions×2 - Gols rebuts×1', leftMargin, yPos);
     yPos += 10;
     
     addSeparator();
